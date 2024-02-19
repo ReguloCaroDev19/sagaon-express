@@ -76,3 +76,4 @@ app.get('/:id', async (req, res) => {
 	}
 });
 server.on('error', console.error);
+module.exports = app;
