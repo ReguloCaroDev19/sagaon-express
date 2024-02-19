@@ -1,8 +1,3 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
-
 const express = require('express');
 const db = require('./src/db');
 const cors = require('cors');
@@ -29,13 +24,13 @@ app.get('/:id', async (req, res) => {
 		};
 		const result = await db.query(query);
 
-		//	query = {
-		//		text: `SELECT m.*
-		//FROM producto p
-		//JOIN materiales m ON m.id = ANY(p.materiales) WHERE p.sku = $1`,
-		//		values: [id],
-		//	};
-		//	const resultMateriales = await db.query(query);
+		query = {
+			text: `SELECT m.*
+		FROM producto p
+		JOIN materiales m ON m.id = ANY(p.materiales) WHERE p.sku = $1`,
+			values: [id],
+		};
+		const resultMateriales = await db.query(query);
 
 		//	query = {
 		//		text: `SELECT m.*
@@ -52,13 +47,13 @@ app.get('/:id', async (req, res) => {
 		//		values: [id],
 		//	};
 		//	const resultProyectos = await db.query(query);
-		//	result.rows.forEach((producto) => {
-		//		producto.materiales = producto.materiales.map((materialId) => {
-		//			return resultMateriales.rows.find(
-		//				(material) => material.id === materialId
-		//			);
-		//		});
-		//	});
+		result.rows.forEach((producto) => {
+			producto.materiales = producto.materiales.map((materialId) => {
+				return resultMateriales.rows.find(
+					(material) => material.id === materialId
+				);
+			});
+		});
 		//	result.rows.forEach((producto) => {
 		//		producto.imagenesusuarios = producto.imagenesusuarios.map((imagenID) => {
 		//			return resultImagen.rows.find((imagen) => imagen.id === imagenID);
