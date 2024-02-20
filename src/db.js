@@ -1,11 +1,12 @@
 const { Pool } = require('pg');
+require('dotenv').config()
 
 const pool = new Pool({
-	user: 'ekptanti',
-	password: 'XwIVv0eZt4V-2bIsLKee0bMTMawbsi_v',
-	host: 'bubble.db.elephantsql.com',
-	port: 5432,
-	database: 'ekptanti'
+	user: process.env.USER_DATABASE,
+	password: process.env.PASSWORD_DATABASE,
+	host: process.env.HOST_DATABASE,
+	port: process.env.PORT,
+	database: process.env.USER_DATABASE
 });
 
 module.exports = {

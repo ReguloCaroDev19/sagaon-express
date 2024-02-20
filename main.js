@@ -3,7 +3,7 @@ const db = require('./src/db');
 const cors = require('cors');
 
 const app = express();
-const port = process.env.PORT || 3333;
+const port = 3333;
 app.use(cors());
 
 app.get('/api', (req, res) => {
@@ -32,6 +32,13 @@ app.get('/:id', async (req, res) => {
 		};
 		const resultMateriales = await db.query(query);
 
+		query = {
+			text: `SELECT m.*
+		FROM producto p
+		JOIN preguntas m ON m.id = ANY(p.preguntas) WHERE p.sku = $1`,
+			values: [id],
+		};
+		const resultPreguntas = await db.query(query);
 		//	query = {
 		//		text: `SELECT m.*
 		//FROM producto p
@@ -47,6 +54,13 @@ app.get('/:id', async (req, res) => {
 		//		values: [id],
 		//	};
 		//	const resultProyectos = await db.query(query);
+		result.rows.forEach((producto) => {
+			producto.preguntas = producto.preguntas.map((materialId) => {
+				return resultPreguntas.rows.find(
+					(material) => material.id === materialId
+				);
+			});
+		});
 		result.rows.forEach((producto) => {
 			producto.materiales = producto.materiales.map((materialId) => {
 				return resultMateriales.rows.find(
