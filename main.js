@@ -23,61 +23,19 @@ app.get('/:id', async (req, res) => {
 			values: [id],
 		};
 		const result = await db.query(query);
-
-		//query = {
-		//	text: `SELECT m.*
-		//FROM producto p
-		//JOIN materiales m ON m.id = ANY(p.materiales) WHERE p.sku = $1`,
-		//	values: [id],
-		//};
-		//const resultMateriales = await db.query(query);
-
-		//query = {
-		//	text: `SELECT m.*
-		//FROM producto p
-		//JOIN preguntas m ON m.id = ANY(p.preguntas) WHERE p.sku = $1`,
-		//	values: [id],
-		//};
-		//const resultPreguntas = await db.query(query);
-		//	query = {
-		//		text: `SELECT m.*
-		//FROM producto p
-		//JOIN imagen m ON m.id = ANY(p.imagenesUsuarios) WHERE p.sku = $1`,
-		//		values: [id],
-		//	};
-		//	const resultImagen = await db.query(query);
-
-		//	query = {
-		//		text: `SELECT m.*
-		//FROM producto p
-		//JOIN proyectos_sagaon m ON m.id = ANY(p.proyectossagaon) WHERE p.sku = $1`,
-		//		values: [id],
-		//	};
-		//	const resultProyectos = await db.query(query);
-		//result.rows.forEach((producto) => {
-		//	producto.preguntas = producto.preguntas.map((materialId) => {
-		//		return resultPreguntas.rows.find(
-		//			(material) => material.id === materialId
-		//		);
-		//	});
-		//});
-		//result.rows.forEach((producto) => {
-		//	producto.materiales = producto.materiales.map((materialId) => {
-		//		return resultMateriales.rows.find(
-		//			(material) => material.id === materialId
-		//		);
-		//	});
-		//});
-		//	result.rows.forEach((producto) => {
-		//		producto.imagenesusuarios = producto.imagenesusuarios.map((imagenID) => {
-		//			return resultImagen.rows.find((imagen) => imagen.id === imagenID);
-		//		});
-		//	});
-		//	result.rows.forEach((producto) => {
-		//		producto.proyectossagaon = producto.proyectossagaon.map((imagenID) => {
-		//			return resultProyectos.rows.find((imagen) => imagen.id === imagenID);
-		//		});
-		//	});
+		query = {
+			text: `SELECT m.*
+				FROM materiales m
+				JOIN materiales_productos mp ON m.id = mp.id_material
+				JOIN producto p ON mp.id_producto = p.id
+				WHERE p.sku = $1`,
+			values: [id],
+		};
+		const resultadoMateriales = await db.query(query);
+		if (!result.rows[0].materiales) {
+			result.rows[0].materiales = [];
+		}
+		result.rows[0].materiales.push(resultadoMateriales.rows);
 		res.json(result.rows);
 	} catch (err) {
 		console.error(err);
